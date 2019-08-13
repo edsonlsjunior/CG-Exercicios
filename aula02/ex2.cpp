@@ -96,10 +96,10 @@ void keyboard(unsigned char key, int x, int y)
         case 27:
             exit(0);
             break;
-        case (char)GLUT_KEY_LEFT: case 'x':
+        case GLUT_KEY_LEFT: case 'x':
             indice = (indice - 1 + 3) % 3;
             break;
-        case (char)GLUT_KEY_RIGHT: case 'z':
+        case GLUT_KEY_RIGHT: case 'z':
             indice = (indice+1) % 3;
             break;
     }
