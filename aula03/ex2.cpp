@@ -1,192 +1,50 @@
+/*
+  Name:        quad_transform.cpp
+  Copyright:   Version 0.1
+  Author:      Rodrigo Luis de Souza da Silva
+  Date:        16/09/2004
+  Last Update: 07/08/2019
+  Description: Transformations using of OpenGL commands
+*/
+
 #include <GL/glut.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <cmath>
 #include <iostream>
 
-float shoulder = 0.0f, elbow = 0.0f, fist = 0.0f, claw = 45.0f;
+float angle = 0, scale = 1.0;
+float xtrans = 0, ytrans = 0, ztrans = 0;
+int enableMenu = 0;
 
-int selected = 1;
+void display(void);
+void init (void);
+void desenhaEixos();
+void showMenu();
+void mouse(int button, int state, int x, int y);
 
-void init(void)
-{
-    printf("Pressione as setas direita e esquerda para mover o braco.\n");
-    printf("Selecione as teclas 1 e 2 para escolher o segmento a ser movido.\n");
-    printf("Pressione ESC para sair.\n");
-
-    glClearColor (0.0, 0.0, 0.0, 0.0);
-    glShadeModel (GL_SMOOTH);
-
-    glEnable(GL_LIGHT0);                   // habilita luz 0
-    glEnable(GL_COLOR_MATERIAL);           // Utiliza cor do objeto como material
-    glColorMaterial(GL_FRONT, GL_DIFFUSE);
-
-    glEnable(GL_LIGHTING);                 // Habilita luz
-    glEnable(GL_DEPTH_TEST);               // Habilita Z-buffer
-    glEnable(GL_CULL_FACE);                // Habilita Backface-Culling
-}
-
-void desenhaEixos()
-{
-    glDisable(GL_LIGHTING);
-    glBegin(GL_LINES);
-    glColor3f(1.0f, 0.0f, 0.0f);
-    glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(10.0f, 0.0f, 0.0f);
-
-    glColor3f(0.0f, 1.0f, 0.0f);
-    glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(0.0f, 10.0f, 0.0f);
-
-    glColor3f(0.0f, 0.0f, 1.0f);
-    glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(0.0f, 0.0f, 10.0f);
-    glEnd();
-    glEnable(GL_LIGHTING);
-}
-
-void display(void)
-{
-    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    desenhaEixos();
-    glColor3f(1.0f, 1.0f, 0.0f);
-
-    glPushMatrix();
-        glRotatef (shoulder, 0.0, 0.0, 1.0); // rotação inicial da base (ombro) do braço
-        glTranslatef (1.0, 0.0, 0.0); // Translada 1.0, pois o braço terá 2.0 de comprimento
-        glPushMatrix();
-            glScalef (2.0, 0.5, 0.5);
-            glutSolidCube (1.0);
-        glPopMatrix();
-
-        glTranslatef (1.0, 0.0, 0.0); // origem posicionada no cotovelo
-        glRotatef (elbow, 0.0, 0.0, 1.0); // faz rotação em relação ao cotovelo
-        glTranslatef (1.0, 0.0, 0.0); // posiciona antebraço de tamanho 2 na posição correta
-        glPushMatrix();
-            glScalef (2.0, 0.5, 0.5);
-            glutSolidCube (1.0);
-        glPopMatrix();
-
-        glTranslatef (1.0, 0.0, 0.0);
-        glRotatef (fist, 0.0, 0.0, 1.0);
-        glTranslatef (1.0, 0.0, 0.0);
-        glPushMatrix();
-            glScalef (2.0, 0.5, 0.5);
-            glutSolidCube (1.0);
-        glPopMatrix();
-
-        glColor3f(1.0f, 0.0f, 0.0f);
-
-
-        glTranslatef (1.0, 0.0, 0.0);
-
-        glPushMatrix();
-            glRotatef (-claw, 0.0, 0.0, 1.0);
-            glTranslatef (0.5, 0.0, 0.0);
-            glPushMatrix();
-                glScalef (1.0, 0.25, 0.25);
-                glutSolidCube (1.0);
-            glPopMatrix();
-
-            glPushMatrix();
-                glTranslatef (0.5, 0.0, 0.0);
-                glRotatef (60.0, 0.0, 0.0, 1.0);
-                glTranslatef (0.5, 0.0, 0.0);
-                glScalef (1.0, 0.25, 0.25);
-                glutSolidCube (1.0);
-
-            glPopMatrix();
-
-        glPopMatrix();
-
-       glPushMatrix();
-            glRotatef (claw, 0.0, 0.0, 1.0);
-            glTranslatef (0.5, 0.0, 0.0);
-            glPushMatrix();
-                glScalef (1.0, 0.25, 0.25);
-                glutSolidCube (1.0);
-            glPopMatrix();
-
-            glPushMatrix();
-                glTranslatef (0.5, 0.0, 0.0);
-                glRotatef (-60.0, 0.0, 0.0, 1.0);
-                glTranslatef (0.5, 0.0, 0.0);
-                glScalef (1.0, 0.25, 0.25);
-                glutSolidCube (1.0);
-
-            glPopMatrix();
-
-        glPopMatrix();
-
-    glPopMatrix(); // origem volta para o sistema de coordenadas original
-
-    glutSwapBuffers();
-
-    std::cout << claw << "\n";
-}
-
-void reshape (int w, int h)
-{
-    glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glMatrixMode (GL_PROJECTION);
-    glLoadIdentity ();
-    gluPerspective(60.0, (GLfloat) w/(GLfloat) h, 1.0, 200.0);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity ();
-    gluLookAt (10.0, 10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-}
-
-void keyboard (unsigned char key, int x, int y)
-{
-    switch (key)
-    {
-        case '1':
-            selected = 1;
-            break;
-        case '2':
-            selected = 2;
-            break;
-        case '3':
-            selected = 3;
-            break;
-        case '4':
-            selected = 4;
-            break;
-        case 27:
-            exit(0);
-            break;
-        default:
-            break;
-    }
-}
-
-// Special Keys callback
-void specialKeys(int key, int x, int y)
+void specialKeysPress(int key, int x, int y)
 {
     switch(key)
     {
-        case GLUT_KEY_LEFT:
-            if(selected == 1)
-                shoulder = ((int) shoulder + 5) % 360;
-            if(selected == 2)
-                elbow = ((int) elbow + 5) % 360;
-            if(selected == 3)
-                fist = ((int) fist + 5) % 360;
-            if(selected == 4 && claw < 90)
-                claw = ((int) claw + 5) % 360;
+        case GLUT_KEY_UP:
+            if (ytrans < 5)
+                ytrans += 1.0;
+            break;
+        case GLUT_KEY_DOWN:
+            if (ytrans > 0)
+                ytrans -= 1.0;
             break;
         case GLUT_KEY_RIGHT:
-            if(selected == 1)
-                shoulder = ((int) shoulder - 5) % 360;
-            if(selected == 2)
-                elbow = ((int) elbow - 5) % 360;
-            if(selected == 3)
-                fist = ((int) fist - 5) % 360;
-            if(selected == 4 && claw > 35)
-            {
-                claw = ((int) claw - 5) % 360;
-            }
+            if (xtrans < 5)
+                xtrans += 1.0;
+            break;
+        case GLUT_KEY_LEFT:
+            if (xtrans > 0)
+                xtrans -= 1.0;
+            break;
+        default:
+            printf("\nPressionou outra tecla especial nÃ£o mapeada!");
             break;
     }
     glutPostRedisplay();
@@ -195,15 +53,79 @@ void specialKeys(int key, int x, int y)
 int main(int argc, char** argv)
 {
     glutInit(&argc, argv);
-    glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-    glutInitWindowSize (640, 640);
+    glutInitDisplayMode (GLUT_DOUBLE|GLUT_DEPTH|GLUT_RGB);
+    glutInitWindowSize (300, 300);
     glutInitWindowPosition (100, 100);
-    glutCreateWindow (argv[0]);
+    glutCreateWindow ("hello");
     init ();
+    printf("Posicione as janelas e clique na janela do OpenGL para habilitar o menu.\n");
     glutDisplayFunc(display);
-    glutReshapeFunc(reshape);
-    glutKeyboardFunc(keyboard);
-    glutSpecialFunc( specialKeys );
     glutMainLoop();
+
     return 0;
+}
+
+// Mouse callback
+void mouse(int button, int state, int x, int y)
+{
+    if ( button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+        enableMenu = 1;
+}
+
+void display(void)
+{
+    // Limpar todos os pixels
+    glClear (GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+    glLoadIdentity(); // Inicializa com matriz identidade
+
+    //desenhaEixos();
+
+    glColor3f (1.0, 1.0, 1.0);
+
+        //glRotatef(angle, 0.0, 0.0, 1.0);
+        //glScalef(scale, scale, scale);
+
+        for (int k = 0; k < 3; ++k)
+        {
+            for (double i = -3.5; i <= 2.5; i += 2.0)
+            {
+                glPushMatrix();
+                glTranslatef(i, 2.5 - 2*k, 0.0);
+                glutSolidCube(1);
+                glPopMatrix();
+            }
+
+            for (double i = -2.5; i <= 2.5; i += 2.0)
+            {
+                glPushMatrix();
+                glTranslatef(i, 1.5 - 2*k, 0.0);
+                glutSolidCube(1);
+                glPopMatrix();
+            }
+        }
+
+    glColor3f (1.0, 0.0, 0.0);
+
+    glTranslatef(-2.5 + xtrans, -2.5 + ytrans, 0.0);
+    glutSolidSphere(0.5, 20, 20);
+
+    glutSwapBuffers ();
+    glutPostRedisplay();
+}
+
+void init (void)
+{
+    // selecionar cor de fundo (preto)
+    glClearColor (0.0, 0.0, 0.0, 0.0);
+
+    // inicializar sistema de viz.
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(-3.0, 3.0, -3.0, 3.0, -1.0, 1.0);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+
+    glutSpecialFunc( specialKeysPress );
 }

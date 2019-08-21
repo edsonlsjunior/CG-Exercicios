@@ -2,7 +2,7 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="Transform" />
+		<Option title="3D View" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
@@ -33,7 +33,7 @@
 			<Add library="png" />
 			<Add library="z" />
 		</Linker>
-		<Unit filename="ex2.cpp" />
+		<Unit filename="ex01.cpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />
